@@ -2,29 +2,43 @@ import propTypes from 'prop-types';
 import React, { Component } from 'react';
 import css from './ContactForm.module.css';
 
+
+
+
+
 export class ContactForm extends Component {
+
+  static propTypes = {
+    onSubmit: propTypes.func.isRequired,
+  };
+    
   state = {
     name: '',
     number: '',
   };
+ 
+    
+ hanldeChange = event => {
+    const { name, value } = event.currentTarget;
 
-  handleChange = e => {
-    const { name, value } = e.target;
-    this.setState({ [name]: value });
+    this.setState({
+      [name]: value,
+    });
   };
 
   handleSubmit = e => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    this.props.handleSubmit(this.state);
-    form.reset();
+     e.preventDefault();
+    const { addNewContact } = this.props;
+    addNewContact({ ...this.state });
+    this.setState({ name: '', number: '' });
   };
+  
 
   render() {
     const { name, number } = this.state;
 
     return (
-      <form className={css.form} onSubmit={this.handleSubmit}>
+      <form className={css.form} onSubmit={this.handleSubmit} >
         <label htmlFor='name' className={css.formLabel}>Name </label>
         <input
         className={css.formName}
@@ -36,7 +50,7 @@ export class ContactForm extends Component {
           required
           placeholder="Enter name"
           value={name}
-          onChange={this.handleChange}
+          onChange={this.hanldeChange}
         />
         <label htmlFor='number' className={css.formLabel}>Number </label>
         <input
@@ -49,16 +63,12 @@ export class ContactForm extends Component {
           required
           placeholder="Enter phone number"
           value={number}
-          onChange={this.handleChange}
+          onChange={this.hanldeChange}
         />
-        <button className={css.formBtn} type="submit">
+        <button  className={css.formBtn} type="submit" >
           Add contact
         </button>
       </form>
     );
   }
 }
-
-ContactForm.propTypes = {
-  handleSubmit: propTypes.func.isRequired,
-};
